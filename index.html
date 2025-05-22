@@ -4,15 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jorge's Game Dev Portfolio</title>
+  <meta name="theme-color" content="#1a1a3d">
   <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Press Start 2P', cursive;
+      font-family: 'Inter', Arial, sans-serif;
       background: linear-gradient(135deg, #1a1a3d 0%, #2a0a3a 100%);
       background-attachment: fixed;
     }
@@ -29,8 +30,9 @@
       100% { transform: translate(0); }
     }
     .parallax {
-      background: url('https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?auto=format&fit=crop&w=1920&q=80') center/cover;
+      background: url('https://wallpaperaccess.com/full/981872.jpg') center/cover;
       background-attachment: fixed;
+      filter: grayscale(80%);
     }
     .pixel-border {
       border: 4px solid transparent;
@@ -42,29 +44,65 @@
       height: auto;
       aspect-ratio: 16 / 9;
     }
+    :root {
+  --neon-green: #00ff00;
+  --dark-bg: #000000;
+  --light-bg: #101010;
+}
+
+body.light-mode {
+  background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
+  color: white;
+}
+
+body.dark-mode {
+  background: linear-gradient(135deg, #000000 0%, #0f0f0f 100%);
+  color: var(--neon-green);
+}
+
+.glow-text {
+  text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
+}
+
+.toggle-xbox {
+  background-color: var(--neon-green);
+  box-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+  color: black;
+  font-size: 1.2rem;
+  border: 2px solid black;
+}
   </style>
 </head>
-<body className="bg-gray-900 text-white min-h-screen">
+<body class="light-mode" className="bg-gray-900 text-white min-h-screen">
   <div id="root"></div>
   <script type="text/babel">
     const { useState } = React;
 
     // Theme Toggle Component
     function ThemeToggle() {
-      const [isDark, setIsDark] = useState(true);
-      const toggleTheme = () => {
-        setIsDark(!isDark);
-        document.documentElement.classList.toggle('dark');
-      };
-      return (
-        <button
-          onClick={toggleTheme}
-          className="p-3 rounded-full bg-neon-pink dark:bg-neon-blue text-white hover:scale-110 transition pixel-border"
-        >
-          {isDark ? '☀️' : '🌙'}
-        </button>
-      );
+  const [isDark, setIsDark] = React.useState(true);
+
+  const toggleTheme = () => {
+    setIsDark(!isDark);
+    const body = document.body;
+    if (isDark) {
+      body.classList.remove('light-mode');
+      body.classList.add('dark-mode');
+    } else {
+      body.classList.remove('dark-mode');
+      body.classList.add('light-mode');
     }
+  };
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="toggle-xbox px-4 py-2 rounded-full hover:scale-110 transition duration-300"
+    >
+      {isDark ? '☀️' : '🌙'}
+    </button>
+  );
+}
 
     // Header Component
     function Header() {
@@ -90,8 +128,8 @@
       return (
         <section id="home" className="min-h-screen flex items-center justify-center parallax text-center">
           <div className="animate__animated animate__zoomIn">
-            <h1 className="text-4xl sm:text-6xl font-bold mb-4 glitch text-white">Jorge's Game Universe</h1>
-            <p className="text-lg sm:text-xl mb-6 text-white">Crafting immersive games with Unity, C#, and a passion for AI-driven adventures</p>
+            <h1 className="text-4xl sm:text-6xl font-bold mb-4 glitch text-white glow-text">Jorge Oviedo Portfolio</h1>
+            <p className="text-lg sm:text-xl mb-6 text-white">If life gives you snow, just peng-win it!</p>
             <a
               href="#projects"
               className="inline-block px-6 py-3 bg-neon-blue text-black font-semibold rounded-lg hover:bg-neon-pink transition pixel-border"
@@ -114,6 +152,8 @@
                 <p className="text-base sm:text-lg">
                   I'm a game developer skilled in Unity, C#, React, and JavaScript, with a knack for building AI-driven games and interactive experiences. From indie jams to collaborative projects, I bring creativity and code to life.
                 </p>
+              </div>
+              <div className="md:w-1/6">
               </div>
               <div className="md:w-1/2 grid grid-cols-2 gap-4">
                 {['Unity', 'C#', 'React', 'JavaScript', 'AI Integration', 'GraphQL'].map((skill) => (
@@ -239,8 +279,7 @@
       return (
         <section id="contact" className="py-20 bg-gray-900/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-8 animate__animated animate__fadeIn glitch">Join the Game</h2>
-            <p className="text-base sm:text-lg mb-6">Want to collab on epic games? Connect with me!</p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8 animate__animated animate__fadeIn glitch">Connect with me!</h2>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <a href="https://www.linkedin.com/in/jorgeos10/" className="px-4 py-2 bg-neon-blue text-white rounded-lg hover:bg-neon-pink transition pixel-border" target="_blank" rel="noopener noreferrer">LinkedIn</a>
               <a href="https://github.com/Hoenirro" className="px-4 py-2 bg-neon-blue text-white rounded-lg hover:bg-neon-pink transition pixel-border" target="_blank" rel="noopener noreferrer">GitHub</a>
