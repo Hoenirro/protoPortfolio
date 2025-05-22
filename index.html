@@ -1,0 +1,276 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jorge's Game Dev Portfolio</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background: linear-gradient(135deg, #1a1a3d 0%, #2a0a3a 100%);
+      background-attachment: fixed;
+    }
+    .glitch {
+      position: relative;
+      animation: glitch 1s linear infinite alternate;
+    }
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+    .parallax {
+      background: url('https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?auto=format&fit=crop&w=1920&q=80') center/cover;
+      background-attachment: fixed;
+    }
+    .pixel-border {
+      border: 4px solid transparent;
+      box-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00ff;
+      border-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAAB1JREFUCB1jYGBg+A8EDEwgKHgPBAyMIOAfCAgA0s8G1xD1JboAAAAASUVORK5CYII=') 4;
+    }
+  </style>
+</head>
+<body className="bg-gray-900 text-white min-h-screen">
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    // Theme Toggle Component
+    function ThemeToggle() {
+      const [isDark, setIsDark] = useState(true);
+      const toggleTheme = () => {
+        setIsDark(!isDark);
+        document.documentElement.classList.toggle('dark');
+      };
+      return (
+        <button
+          onClick={toggleTheme}
+          className="p-3 rounded-full bg-neon-pink dark:bg-neon-blue text-white hover:scale-110 transition pixel-border"
+        >
+          {isDark ? '☀️' : '🌙'}
+        </button>
+      );
+    }
+
+    // Header Component
+    function Header() {
+      return (
+        <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md shadow-md z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <h1 className="text-3xl glitch">Jorge's Game Dev Portfolio</h1>
+            <div className="flex space-x-4 items-center mt-4 sm:mt-0">
+              <a href="#home" className="hover:text-neon-pink transition">Home</a>
+              <a href="#about" className="hover:text-neon-pink transition">About</a>
+              <a href="#projects" className="hover:text-neon-pink transition">Projects</a>
+              <a href="#contact" className="hover:text-neon-pink transition">Contact</a>
+              <ThemeToggle />
+            </div>
+          </div>
+        </nav>
+      );
+    }
+
+    // Hero Component
+    function Hero() {
+      return (
+        <section id="home" className="min-h-screen flex items-center justify-center parallax text-center">
+          <div className="animate__animated animate__zoomIn">
+            <h1 className="text-4xl sm:text-6xl font-bold mb-4 glitch">Jorge's Game Universe</h1>
+            <p className="text-lg sm:text-xl mb-6">Crafting immersive games with Unity, C#, and a passion for AI-driven adventures</p>
+            <a
+              href="#projects"
+              className="inline-block px-6 py-3 bg-neon-blue text-white font-semibold rounded-lg hover:bg-neon-pink transition pixel-border"
+            >
+              Play My Games
+            </a>
+          </div>
+        </section>
+      );
+    }
+
+    // About Component
+    function About() {
+      return (
+        <section id="about" className="py-20 bg-gray-900/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center animate__animated animate__fadeIn glitch">Player Stats</h2>
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="md:w-1/2 mb-6 md:mb-0">
+                <p className="text-base sm:text-lg">
+                  I'm a game developer skilled in Unity, C#, React, and JavaScript, with a knack for building AI-driven games and interactive experiences. From indie jams to collaborative projects, I bring creativity and code to life.
+                </p>
+              </div>
+              <div className="md:w-1/2 grid grid-cols-2 gap-4">
+                {['Unity', 'C#', 'React', 'JavaScript', 'AI Integration', 'GraphQL'].map((skill) => (
+                  <div
+                    key={skill}
+                    className="p-4 bg-gray-800 rounded-lg pixel-border hover:scale-105 transition transform"
+                  >
+                    {skill}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // Project Component
+    function Project({ title, description, image, link }) {
+      return (
+        <div className="p-6 bg-gray-800 rounded-lg pixel-border hover:scale-105 transition transform">
+          <div className="w-full h-40 bg-gray-700 rounded mb-4" style={{ background: `url(${image}) center/cover` }}></div>
+          <h3 className="text-xl font-semibold mb-2">{title}</h3>
+          <p>{description}</p>
+          <a href={link} className="inline-block mt-4 text-neon-pink hover:underline" target="_blank" rel="noopener noreferrer">Play Now</a>
+        </div>
+      );
+    }
+
+    // Projects Component
+    function Projects() {
+      const projects = [
+        {
+          title: 'Lost In The Void',
+          description: 'An immersive game where players navigate a mysterious void, blending exploration and puzzle-solving.',
+          image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=300&q=80',
+          link: 'https://jorgeos.itch.io/lost-in-the-void'
+        },
+        {
+          title: 'The Weight of Your Decisions',
+          description: 'A narrative-driven game where choices shape the outcome, built for a game jam.',
+          image: 'https://images.unsplash.com/photo-1552820728-8b83bb21ef82?auto=format&fit=crop&w=300&q=80',
+          link: 'https://jorgeos.itch.io/the-weight-of-your-decisions'
+        },
+        {
+          title: 'GraphQL AI Chat 3D Game',
+          description: 'A 3D game integrating GraphQL and AI for dynamic chat-based gameplay.',
+          image: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?auto=format&fit=crop&w=300&q=80',
+          link: 'https://github.com/Hoenirro/GraphQL_AIchat_JavaScript3DGame'
+        },
+      ];
+      return (
+        <section id="projects" className="py-20 bg-gray-900/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center animate__animated animate__fadeIn glitch">Game Library</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {projects.map((project, index) => (
+                <Project key={index} title={project.title} description={project.description} image={project.image} link={project.link} />
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // Contact Component
+    function Contact() {
+      return (
+        <section id="contact" className="py-20 bg-gray-900/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8 animate__animated animate__fadeIn glitch">Join the Game</h2>
+            <p className="text-base sm:text-lg mb-6">Want to collab on epic games? Connect with me!</p>
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <a href="https://www.linkedin.com/in/jorgeos10/" className="px-4 py-2 bg-neon-blue text-white rounded-lg hover:bg-neon-pink transition pixel-border" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a href="https://github.com/Hoenirro" className="px-4 py-2 bg-neon-blue text-white rounded-lg hover:bg-neon-pink transition pixel-border" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://jorgeos.itch.io/" className="px-4 py-2 bg-neon-blue text-white rounded-lg hover:bg-neon-pink transition pixel-border" target="_blank" rel="noopener noreferrer">itch.io</a>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // Footer Component
+    function Footer() {
+      return (
+        <footer className="py-6 bg-gray-900 text-white text-center">
+          <p>© 2025 Jorge's Game Dev Portfolio. All rights reserved.</p>
+          <div className="mt-4 space-x-4">
+            <a href="https://www.linkedin.com/in/jorgeos10/" className="hover:text-neon-pink transition" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://github.com/Hoenirro" className="hover:text-neon-pink transition" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://jorgeos.itch.io/" className="hover:text-neon-pink transition" target="_blank" rel="noopener noreferrer">itch.io</a>
+          </div>
+        </footer>
+      );
+    }
+
+    // Main App Component
+    function App() {
+      return (
+        <div>
+          <Header />
+          <Hero />
+          <About />
+          <Projects />
+          <Contact />
+          <Footer />
+        </div>
+      );
+    }
+
+    // Render the App
+    ReactDOM.render(<App />, document.getElementById('root'));
+
+    // Tailwind Custom Colors
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'neon-pink': '#ff00ff',
+            'neon-blue': '#00ffcc',
+          },
+        },
+      },
+    };
+  </script>
+</body>
+</html>
