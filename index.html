@@ -39,70 +39,72 @@
       box-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00ff;
       border-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAAB1JREFUCB1jYGBg+A8EDEwgKHgPBAyMIOAfCAgA0s8G1xD1JboAAAAASUVORK5CYII=') 4;
     }
-    video, iframe {
+    video, iframe, canvas {
       max-width: 100%;
       height: auto;
       aspect-ratio: 16 / 9;
     }
     :root {
-  --neon-green: #00ff00;
-  --dark-bg: #000000;
-  --light-bg: #101010;
-}
-
-body.light-mode {
-  background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
-  color: white;
-}
-
-body.dark-mode {
-  background: linear-gradient(135deg, #000000 0%, #0f0f0f 100%);
-  color: var(--neon-green);
-}
-
-.glow-text {
-  text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
-}
-
-.toggle-xbox {
-  background-color: var(--neon-green);
-  box-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
-  color: black;
-  font-size: 1.2rem;
-  border: 2px solid black;
-}
+      --neon-green: #00ff00;
+      --dark-bg: #000000;
+      --light-bg: #101010;
+    }
+    body.light-mode {
+      background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
+      color: white;
+    }
+    body.dark-mode {
+      background: linear-gradient(135deg, #000000 0%, #0f0f0f 100%);
+      color: var(--neon-green);
+    }
+    .glow-text {
+      text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
+    }
+    .toggle-xbox {
+      background-color: var(--neon-green);
+      box-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+      color: black;
+      font-size: 1.2rem;
+      border: 2px solid black;
+    }
+    .game-canvas {
+      background: #000;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.7), 0 0 30px rgba(255, 0, 255, 0.7);
+    }
   </style>
 </head>
-<body class="light-mode" className="bg-gray-900 text-white min-h-screen">
+<body class="light-mode">
   <div id="root"></div>
+  <script src="game.js"></script>
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
 
     // Theme Toggle Component
     function ThemeToggle() {
-  const [isDark, setIsDark] = React.useState(true);
+      const [isDark, setIsDark] = React.useState(true);
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    const body = document.body;
-    if (isDark) {
-      body.classList.remove('light-mode');
-      body.classList.add('dark-mode');
-    } else {
-      body.classList.remove('dark-mode');
-      body.classList.add('light-mode');
+      const toggleTheme = () => {
+        setIsDark(!isDark);
+        const body = document.body;
+        if (isDark) {
+          body.classList.remove('light-mode');
+          body.classList.add('dark-mode');
+        } else {
+          body.classList.remove('dark-mode');
+          body.classList.add('light-mode');
+        }
+      };
+
+      return (
+        <button
+          onClick={toggleTheme}
+          className="toggle-xbox px-4 py-2 rounded-full hover:scale-110 transition duration-300"
+        >
+          {isDark ? '☀️' : '🌙'}
+        </button>
+      );
     }
-  };
-
-  return (
-    <button
-      onClick={toggleTheme}
-      className="toggle-xbox px-4 py-2 rounded-full hover:scale-110 transition duration-300"
-    >
-      {isDark ? '☀️' : '🌙'}
-    </button>
-  );
-}
 
     // Header Component
     function Header() {
@@ -153,8 +155,7 @@ body.dark-mode {
                   I'm a game developer skilled in Unity, C#, React, and JavaScript, with a knack for building AI-driven games and interactive experiences. From indie jams to collaborative projects, I bring creativity and code to life.
                 </p>
               </div>
-              <div className="md:w-1/6">
-              </div>
+              <div className="md:w-1/6"></div>
               <div className="md:w-1/2 grid grid-cols-2 gap-4">
                 {['Unity', 'C#', 'React', 'JavaScript', 'AI Integration', 'GraphQL'].map((skill) => (
                   <div
@@ -223,8 +224,38 @@ body.dark-mode {
             <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center animate__animated animate__fadeIn glitch">Game Library</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {projects.map((project, index) => (
-                <Project key={index} title={project.title} description={project.description} image={project.image} link={project.link} />
+                <Project
+                  key={index}
+                  title={project.title}
+                  description={project.description}
+                  image={project.image}
+                  link={project.link}
+                />
               ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // Triangle Shooter Component
+    function TriangleShooter() {
+      useEffect(() => {
+        const game = new Game('gameCanvas', 800, 600);
+        return () => {
+          // Cleanup if needed (e.g., stop game loop)
+        };
+      }, []);
+
+      return (
+        <section id="triangle-shooter" className="py-20 bg-gray-900/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8 animate__animated animate__fadeIn glitch glow-text">Small JS Game to Pass the Time</h2>
+            <div className="flex justify-center">
+              <div className="p-6 bg-gray-800 rounded-lg pixel-border hover:scale-105 transition transform max-w-4xl w-full">
+                <canvas id="gameCanvas" width="800" height="600" className="w-full game-canvas"></canvas>
+                <p className="text-base sm:text-lg mt-4">Move your mouse to control the triangle, click to shoot incoming balls, and rack up your score!</p>
+              </div>
             </div>
           </div>
         </section>
@@ -351,6 +382,7 @@ body.dark-mode {
           <Hero />
           <About />
           <Projects />
+          <TriangleShooter />
           <Showcase />
           <Contact />
           <Footer />
