@@ -272,39 +272,64 @@
 
     // Go To Town Game Component
     function GoToTownGame() {
-      return (
-        <section id="go-to-town" className="py-20 bg-gray-900/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-8 animate__animated animate__fadeIn glitch glow-text">Go To Town - NES-Like Racing Game</h2>
-            <div className="flex justify-center">
-              <div className="p-6 bg-gray-800 rounded-lg pixel-border hover:scale-105 transition transform max-w-4xl w-full">
-                {/* Replace '123456' with your actual upload ID after uploading a web build */}
-                <iframe
-                  frameborder="0"
-                  src="https://itch.io/embed-upload/17428439?color=333333"
-                  width="800"
-                  height="600"
-                  className="w-full rounded-lg"
-                  allowfullscreen
-                ></iframe>
-                <p className="text-base sm:text-lg mt-4">
-                  🎮 AWSD or Arrow Keys to drive | SPACEBAR to clean your windshield
-                  <br />
-                  <a
-                    href="http://jorgeos.itch.io/go-to-town-for-the-jam"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-neon-pink hover:underline"
-                  >
-                    ⬇️ Download Windows version here ⬇️
-                  </a>
-                </p>
-              </div>
+  const [iframeSize, setIframeSize] = useState({ width: 1024, height: 700 });
+  
+  useEffect(() => {
+    const handleResize = () => {
+      const container = document.getElementById('game-embed-container');
+      if (container) {
+        const containerWidth = container.clientWidth;
+        // Maintain 16:9 aspect ratio but with larger base size
+        const newWidth = Math.min(containerWidth, 1280);
+        const newHeight = Math.min(newWidth * 0.7, 800);
+        setIframeSize({ width: newWidth, height: newHeight });
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return (
+    <section id="go-to-town" className="py-20 bg-gray-900/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-8 animate__animated animate__fadeIn glitch glow-text">Go To Town - NES-Like Racing Game</h2>
+        <div className="flex justify-center">
+          <div className="p-4 md:p-6 bg-gray-800 rounded-lg pixel-border transition transform w-full">
+            <div id="game-embed-container" className="w-full flex justify-center">
+              <iframe
+                frameBorder="0"
+                src="https://itch.io/embed-upload/17428439?color=333333"
+                width={iframeSize.width}
+                height={iframeSize.height}
+                className="rounded-lg shadow-2xl"
+                allowFullScreen
+                style={{ maxWidth: '100%', height: 'auto', minHeight: '500px' }}
+              ></iframe>
+            </div>
+            <div className="mt-6">
+              <p className="text-base sm:text-lg font-semibold">
+                🎮 AWSD or Arrow Keys to Drive | SPACEBAR to Clean Windshield
+              </p>
+              <p className="text-sm text-gray-400 mt-2">
+                💡 Tip: Click inside the game first, then use controls. The game is best played in fullscreen mode!
+              </p>
+              <a
+                href="http://jorgeos.itch.io/go-to-town-for-the-jam"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-4 px-5 py-2 bg-neon-blue text-black font-semibold rounded-lg hover:bg-neon-pink transition pixel-border text-sm"
+              >
+                ⬇️ Download Windows Version Here ⬇️
+              </a>
             </div>
           </div>
-        </section>
-      );
-    }
+        </div>
+      </div>
+    </section>
+  );
+}
 
     // Showcase Component
     function Showcase() {
