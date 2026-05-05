@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,49 +18,78 @@
       background: linear-gradient(135deg, #1a1a3d 0%, #2a0a3a 100%);
       background-attachment: fixed;
     }
+
     .glitch {
       position: relative;
       animation: glitch 1s linear infinite alternate;
     }
+
     @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(-2px, -2px); }
-      60% { transform: translate(2px, 2px); }
-      80% { transform: translate(2px, -2px); }
-      100% { transform: translate(0); }
+      0% {
+        transform: translate(0);
+      }
+
+      20% {
+        transform: translate(-2px, 2px);
+      }
+
+      40% {
+        transform: translate(-2px, -2px);
+      }
+
+      60% {
+        transform: translate(2px, 2px);
+      }
+
+      80% {
+        transform: translate(2px, -2px);
+      }
+
+      100% {
+        transform: translate(0);
+      }
     }
+
     .parallax {
       background: url('https://wallpaperaccess.com/full/981872.jpg') center/cover;
       background-attachment: fixed;
       filter: grayscale(80%);
     }
+
     .pixel-border {
       border: 4px solid transparent;
       box-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00ff;
       border-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAAB1JREFUCB1jYGBg+A8EDEwgKHgPBAyMIOAfCAgA0s8G1xD1JboAAAAASUVORK5CYII=') 4;
     }
-    video, iframe, canvas {
+
+    video,
+    iframe,
+    canvas {
       max-width: 100%;
       height: auto;
       aspect-ratio: 16 / 9;
     }
+
     :root {
       --neon-green: #00ff00;
       --dark-bg: #000000;
       --light-bg: #101010;
     }
+
     body.light-mode {
       background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
       color: white;
     }
+
     body.dark-mode {
       background: linear-gradient(135deg, #000000 0%, #0f0f0f 100%);
       color: var(--neon-green);
     }
+
     .glow-text {
       text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
     }
+
     .toggle-xbox {
       background-color: var(--neon-green);
       box-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
@@ -67,6 +97,7 @@
       font-size: 1.2rem;
       border: 2px solid black;
     }
+
     .game-canvas {
       background: #000;
       border-radius: 8px;
@@ -74,6 +105,7 @@
     }
   </style>
 </head>
+
 <body class="light-mode">
   <div id="root"></div>
   <script src="game.js"></script>
@@ -238,23 +270,35 @@
       );
     }
 
-    // Triangle Shooter Component
-    function TriangleShooter() {
-      useEffect(() => {
-        const game = new Game('gameCanvas', 800, 600);
-        return () => {
-          // Cleanup if needed (e.g., stop game loop)
-        };
-      }, []);
-
+    // Go To Town Game Component
+    function GoToTownGame() {
       return (
-        <section id="triangle-shooter" className="py-20 bg-gray-900/50">
+        <section id="go-to-town" className="py-20 bg-gray-900/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-8 animate__animated animate__fadeIn glitch glow-text">Small JS Game to Pass the Time</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-8 animate__animated animate__fadeIn glitch glow-text">Go To Town - NES-Like Racing Game</h2>
             <div className="flex justify-center">
               <div className="p-6 bg-gray-800 rounded-lg pixel-border hover:scale-105 transition transform max-w-4xl w-full">
-                <canvas id="gameCanvas" width="800" height="600" className="w-full game-canvas"></canvas>
-                <p className="text-base sm:text-lg mt-4">Move your mouse to control the triangle, click to shoot incoming balls, and rack up your score!</p>
+                {/* Replace '123456' with your actual upload ID after uploading a web build */}
+                <iframe
+                  frameborder="0"
+                  src="https://itch.io/embed-upload/YOUR_UPLOAD_ID?color=333333"
+                  width="960"
+                  height="600"
+                  className="w-full rounded-lg"
+                  allowfullscreen
+                ></iframe>
+                <p className="text-base sm:text-lg mt-4">
+                  🎮 AWSD or Arrow Keys to drive | SPACEBAR to clean your windshield
+                  <br />
+                  <a
+                    href="http://jorgeos.itch.io/go-to-town-for-the-jam"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-neon-pink hover:underline"
+                  >
+                    ⬇️ Download Windows version here ⬇️
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -382,7 +426,7 @@
           <Hero />
           <About />
           <Projects />
-          <TriangleShooter />
+          <GoToTownGame />
           <Showcase />
           <Contact />
           <Footer />
@@ -406,4 +450,5 @@
     };
   </script>
 </body>
+
 </html>
